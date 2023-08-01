@@ -1,0 +1,108 @@
+{
+    "reflection_and_transmission_coefficients_of_building glass": {
+        "colorless_sheet_glass": {
+            "float-colorless_4-12 mm": {
+                "thickness": {
+                    "low": 0.87,
+                    "high": 0.91
+                },
+                "LRC_coated": {
+                    "low": null,
+                    "high": null
+                },
+                "LRC_uncoated": {
+                    "low": 0.08,
+                    "high": 0.08
+                }
+            }
+        },
+        "multilayer_colorless_glass": {
+            "float_6.38–17.52 mm": {
+                "thickness": {
+                    "low": 0.84,
+                    "high": 0.89
+                },
+                "LRC_coated": {
+                    "low": null,
+                    "high": null
+                },
+                "LRC_uncoated": {
+                    "low": 0.08,
+                    "high": 0.08
+                }
+            }
+        },
+        "glass_with_coatings": {
+            "low-emission_soft_coatings_4-mm thick": {
+                "thickness": {
+                    "low": 0.76,
+                    "high": 0.90
+                },
+                "LRC_coated": {
+                    "low": 0.04,
+                    "high": 0.14
+                },
+                "LRC_uncoated": {
+                    "low": 0.05,
+                    "high": 0.18
+                }
+            },
+            "sunscreen_soft_coating_double-glazed_windows_6-mm": {
+                "thickness": {
+                    "low": 0.08,
+                    "high": 0.67
+                },
+                "LRC_coated": {
+                    "low": 0.10,
+                    "high": 0.51
+                },
+                "LRC_uncoated": {
+                    "low": 0.10,
+                    "high": 0.43
+                }
+            },
+            "sun-proof_hard_coating_double-glazed_and_mono-glazing_6-mm": {
+                "thickness": {
+                    "low": 0.08,
+                    "high": 0.70
+                },
+                "LRC_coated": {
+                    "low": 0.10,
+                    "high": 0.51
+                },
+                "LRC_uncoated": {
+                    "low": 0.05,
+                    "high": 0.41
+                }
+            },
+            "sheet_painted_in_weight_6-mm": {
+                "thickness": {
+                    "low": 0.35,
+                    "high": 0.73
+                },
+                "LRC_coated": {
+                    "low": null,
+                    "high": null
+                },
+                "LRC_uncoated": {
+                    "low": 0.05,
+                    "high": 0.07
+                }
+            },
+            "glass_with_multifunctional_soft_coatings_6-mm": {
+                "thickness": {
+                    "low": 0.16,
+                    "high": 0.88
+                },
+                "LRC_coated": {
+                    "low": 0.03,
+                    "high": 0.37
+                },
+                "LRC_uncoated": {
+                    "low": 0.05,
+                    "high": 0.47
+                }
+            }
+        }
+    }
+}
