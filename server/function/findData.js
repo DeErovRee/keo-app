@@ -68,33 +68,38 @@ function FindData(Psr, z1, z2, Pf, Ld) {
         }
     };
 
-    const getZ2 = (z2) => {
-        if (z2 < 0.1) {
-            CorrectZ2 = "0.1";
+    const getZ2 = (param) => {
+        if(param < 0.1) {
+            param = '0.1'
         }
-        if (z2 > 4) {
-            CorrectZ2 = "4.0";
+        if (param > 4.0) {
+            param = '4.0'
         }
-        if (CorrectZ2 == 4.0 || CorrectZ2 == 2.0 || CorrectZ2 == 1.5 || CorrectZ2 == 1.0 || CorrectZ2 == 0.5 || CorrectZ2 == 0.1) {
-            Params.rangeZ2 = [`${CorrectZ2}`]
-            return;
+        if (param == 4.0 || param == 2.0 || param == 1.5 || param == 1.0 || param == 0.5 || param == 0.1) {
+            Params.rangeZ2 = [`${param}`]
+            return param;
         }
-      
-        if (CorrectZ2 < 0.5) {
+        if (param < 0.5 && param > 0.1) {
             Params.rangeZ2 = ["0.1", "0.5"]
+            return param;
         }
-        if (CorrectZ2 >= 0.5 && CorrectZ2 < 1.0) {
+        if (param > 0.5 && param < 1.0) {
             Params.rangeZ2 = ["0.5", "1.0"]
+            return param;
         }
-        if (CorrectZ2 >= 1.0 && CorrectZ2 < 1.5) {
+        if (param > 1.0 && param < 1.5) {
             Params.rangeZ2 = ["1.0", "1.5"]
+            return param;
         }
-        if (CorrectZ2 >= 1.5 && CorrectZ2 <= 2.0) {
+        if (param > 1.5 && param < 2.0) {
             Params.rangeZ2 = ["1.5", "2.0"]
+            return param;
         }
-        if (CorrectZ2 > 2.0) {
+        if (param > 2.0 && param < 4.0) {
             Params.rangeZ2 = ["2.0", "4.0"]
+            return param;
         }
+        
     };
 
     const GetNewArr = (arr, paramRange) => {
@@ -126,22 +131,25 @@ function FindData(Psr, z1, z2, Pf, Ld) {
         return newArr
     }
 
-    let CorrectZ2 = z2;
+    const Interpolation = (arr, paramRange, param) => {
+        return arr[0] + (param - paramRange[0])*((arr[1] - arr[0]) / (paramRange[1] - paramRange[0]))
+    }
 
     getLd(Ld)
     getPf(Pf)
     getPsr(Psr)
     getZ1(z1)
-    getZ2(z2)
-
+    const CorrectZ2 = getZ2(z2)
+    
     const aDATA = [];
     for (let i = 0; i < Params.rangeLd.length; i++) {
         aDATA.push(tables[Params.rangeLd[i]])
     }
-
+    
     // Получаем исходные данные для интерполяции
     const bDATA = GetNewArr(GetNewArr(GetNewArr(GetNewArr(aDATA, Params.rangePf), Params.rangePsr), Params.rangeZ1), Params.rangeZ2)
-
+    
+    // Разбиваем массив на чанки исходя из Z1 и Z2
     const fDATA = []
     if (Params.rangeZ1.length < 2 && Params.rangeZ2.length > 1 || Params.rangeZ2.length < 2 && Params.rangeZ1.length > 1) {
         const chunkSize = 2;
@@ -156,7 +164,8 @@ function FindData(Psr, z1, z2, Pf, Ld) {
             const chunk = bDATA.slice(i, i + chunkSize);
             fDATA.push(chunk)
         }
-    } else {
+    } 
+    if (Params.rangeZ2.length === 2 && Params.rangeZ1 === 2) {
         const chunkSize = 4;
         for (let i = 0; i < bDATA.length; i += chunkSize) {
             const chunk = bDATA.slice(i, i + chunkSize);
@@ -170,33 +179,32 @@ function FindData(Psr, z1, z2, Pf, Ld) {
         if (fDATA[i].length === 4) {
             const xy1 = fDATA[i][0] + (CorrectZ2 - Params.rangeZ2[0]) * ((fDATA[i][1] - fDATA[i][0]) / (Params.rangeZ2[1] - Params.rangeZ2[0]))
             const xy2 = fDATA[i][2] + (CorrectZ2 - Params.rangeZ2[0]) * ((fDATA[i][3] - fDATA[i][2]) / (Params.rangeZ2[1] - Params.rangeZ2[0]))
-            gDATA.push(xy1 + (z1 - Params.rangeZ1[0]) * ((xy2 - xy1) / (Params.rangeZ1[1] - Params.rangeZ1[0])))
+            gDATA.push(Interpolation([xy1, xy2], Params.rangeZ2, CorrectZ2))
         }
         if (fDATA[i].length === 2) {
             if(Params.rangeZ1.length === 2) {
-                gDATA.push(fDATA[i][0] + (Params.rangeZ1[1] - Params.rangeZ1[0])*((fDATA[i][1] - fDATA[i][0]) / (z1 - Params.rangeZ1[0])))
+                gDATA.push(Interpolation(fDATA[i], Params.rangeZ1, z1))
             }
             if(Params.rangeZ1.length === 1) {
-                gDATA.push(fDATA[i][0] + (Params.rangeZ2[1] - Params.rangeZ2[0])*((fDATA[i][1] - fDATA[i][0]) / (CorrectZ2 - Params.rangeZ2[0])))
+                gDATA.push(Interpolation(fDATA[i], Params.rangeZ2, z2))
             }
         }
         if (fDATA[i].length === 1) {
             gDATA.push(fDATA[i][0])
         }
-    }    
-
+    }
     const hDATA = SliceArr(gDATA, Params.rangePsr)
 
     // Интерполируем по Psr
     const iDATA = []
     for(let i = 0; i < hDATA.length; i++) {
         if(hDATA[i].length === 1) {
+            console.log('скипаем интерполяцию')
             iDATA.push(hDATA[i][0])
         } else {
-            iDATA.push(hDATA[i][0] + (Psr - Params.rangePsr[1])*((hDATA[i][1] - hDATA[i][0]) / (Psr - Params.rangePsr[1])))
+            iDATA.push(Interpolation(hDATA[i], Params.rangePsr, Psr))
         }
     }
-
     const jDATA = SliceArr(iDATA, Params.rangePf)
 
     // Интерполируем по Pf
@@ -205,19 +213,19 @@ function FindData(Psr, z1, z2, Pf, Ld) {
         if(jDATA[i].length === 1) {
             kDATA.push(jDATA[i][0])
         } else {
-            kDATA.push(jDATA[i][0] + (Pf - Params.rangePf[0])*((jDATA[i][1] - jDATA[i][0]) / (Pf - Params.rangePf[0])))
+            kDATA.push(Interpolation(jDATA[i], Params.rangePf, Pf)) 
         }
     }
 
     // Интерполируем по Ld
     let lDATA = null;
     if(Params.rangeLd.length === kDATA.length) {
-        lDATA = kDATA[0] + (Ld - Params.rangeLd[0])*((kDATA[1] - kDATA[0]) / (Params.rangeLd[1] - Params.rangeLd[0]))
+        lDATA = Interpolation(kDATA, Params.rangeLd, Ld) 
     } else {
         lDATA = kDATA[0]
     }
 
-    return lDATA.toFixed(2)
+    return lDATA
 }
 
 module.exports = FindData
