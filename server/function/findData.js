@@ -70,6 +70,9 @@ function FindData(Psr, z1, z2, Pf, Ld) {
 
     let CorrectZ2 = z2;
     const getZ2 = (z2) => {
+        if (z2 < 0.1) {
+            CorrectZ2 = "0.1";
+        }
         if (z2 > 4) {
             CorrectZ2 = "4.0";
         }
@@ -226,14 +229,14 @@ function FindData(Psr, z1, z2, Pf, Ld) {
         }
     }
 
-    const lDATA = []
+    let lDATA = null;
     if(Params.rangeLd.length === kDATA.length) {
-        lDATA.push(kDATA[0] + (Ld - Params.rangeLd[0])*((kDATA[1] - kDATA[0]) / (Params.rangeLd[1] - Params.rangeLd[0])))
+        lDATA = kDATA[0] + (Ld - Params.rangeLd[0])*((kDATA[1] - kDATA[0]) / (Params.rangeLd[1] - Params.rangeLd[0]))
     } else {
-        lDATA.push(kDATA[0])
+        lDATA = kDATA[0]
     }
 
-    return lDATA
+    return lDATA.toFixed(2)
 }
 
 module.exports = FindData
