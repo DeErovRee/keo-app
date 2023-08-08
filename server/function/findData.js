@@ -68,7 +68,6 @@ function FindData(Psr, z1, z2, Pf, Ld) {
         }
     };
 
-    let CorrectZ2 = z2;
     const getZ2 = (z2) => {
         if (z2 < 0.1) {
             CorrectZ2 = "0.1";
@@ -98,6 +97,37 @@ function FindData(Psr, z1, z2, Pf, Ld) {
         }
     };
 
+    const GetNewArr = (arr, paramRange) => {
+        const newArr = []
+        for (let i = 0; i < arr.length; i++) {
+            for (let j = 0; j < paramRange.length; j++) {
+                newArr.push(arr[i][paramRange[j]])
+            }
+        }
+        return newArr
+    }
+
+    const SliceArr = (arr, paramRange) => {
+        const newArr = [];
+        if (paramRange.length === 2) {
+            const chunkSize = 2;
+            for (let i = 0; i < arr.length; i += chunkSize) {
+                const chunk = arr.slice(i, i + chunkSize);
+                newArr.push(chunk)
+            }
+        } 
+        if (paramRange.length === 1) {
+            const chunkSize = 1;
+            for (let i = 0; i < arr.length; i += chunkSize) {
+                const chunk = arr.slice(i, i + chunkSize);
+                newArr.push(chunk)
+            }
+        }
+        return newArr
+    }
+
+    let CorrectZ2 = z2;
+
     getLd(Ld)
     getPf(Pf)
     getPsr(Psr)
@@ -109,56 +139,32 @@ function FindData(Psr, z1, z2, Pf, Ld) {
         aDATA.push(tables[Params.rangeLd[i]])
     }
 
-    const bDATA = []
-    for (let i = 0; i < aDATA.length; i++) {
-        for (let j = 0; j < Params.rangePf.length; j++) {
-            bDATA.push(aDATA[i][Params.rangePf[j]])
-        }
-    }
-
-    const cDATA = []
-    for (let i = 0; i < bDATA.length; i++) {
-        for (let j = 0; j < Params.rangePsr.length; j++) {
-            cDATA.push(bDATA[i][Params.rangePsr[j]])
-        }
-    }
-
-    const dDATA = []
-    for (let i = 0; i < cDATA.length; i++) {
-        for (let j = 0; j < Params.rangeZ1.length; j++) {
-            dDATA.push(cDATA[i][Params.rangeZ1[j]])
-        }
-    }
-
-    const eDATA = []
-    for (let i = 0; i < dDATA.length; i++) {
-        for (let j = 0; j < Params.rangeZ2.length; j++) {
-            eDATA.push(dDATA[i][Params.rangeZ2[j]])
-        }
-    }
+    // Получаем исходные данные для интерполяции
+    const bDATA = GetNewArr(GetNewArr(GetNewArr(GetNewArr(aDATA, Params.rangePf), Params.rangePsr), Params.rangeZ1), Params.rangeZ2)
 
     const fDATA = []
     if (Params.rangeZ1.length < 2 && Params.rangeZ2.length > 1 || Params.rangeZ2.length < 2 && Params.rangeZ1.length > 1) {
         const chunkSize = 2;
-        for (let i = 0; i < eDATA.length; i += chunkSize) {
-            const chunk = eDATA.slice(i, i + chunkSize);
+        for (let i = 0; i < bDATA.length; i += chunkSize) {
+            const chunk = bDATA.slice(i, i + chunkSize);
             fDATA.push(chunk)
         }
     } 
     if (Params.rangeZ1.length === 1 && Params.rangeZ2.length === 1) {
         const chunkSize = 1;
-        for (let i = 0; i < eDATA.length; i += chunkSize) {
-            const chunk = eDATA.slice(i, i + chunkSize);
+        for (let i = 0; i < bDATA.length; i += chunkSize) {
+            const chunk = bDATA.slice(i, i + chunkSize);
             fDATA.push(chunk)
         }
     } else {
         const chunkSize = 4;
-        for (let i = 0; i < eDATA.length; i += chunkSize) {
-            const chunk = eDATA.slice(i, i + chunkSize);
+        for (let i = 0; i < bDATA.length; i += chunkSize) {
+            const chunk = bDATA.slice(i, i + chunkSize);
             fDATA.push(chunk)
         }
     }
 
+    // Интерполируем по Z1 и Z2
     const gDATA = []
     for (let i = 0; i < fDATA.length; i++) {
         if (fDATA[i].length === 4) {
@@ -177,24 +183,11 @@ function FindData(Psr, z1, z2, Pf, Ld) {
         if (fDATA[i].length === 1) {
             gDATA.push(fDATA[i][0])
         }
-    }
+    }    
 
-    const hDATA = []
-    if (Params.rangePsr.length === 2) {
-        const chunkSize = 2;
-        for (let i = 0; i < gDATA.length; i += chunkSize) {
-            const chunk = gDATA.slice(i, i + chunkSize);
-            hDATA.push(chunk)
-        }
-    } 
-    if (Params.rangePsr.length === 1) {
-        const chunkSize = 1;
-        for (let i = 0; i < gDATA.length; i += chunkSize) {
-            const chunk = gDATA.slice(i, i + chunkSize);
-            hDATA.push(chunk)
-        }
-    }
+    const hDATA = SliceArr(gDATA, Params.rangePsr)
 
+    // Интерполируем по Psr
     const iDATA = []
     for(let i = 0; i < hDATA.length; i++) {
         if(hDATA[i].length === 1) {
@@ -204,22 +197,9 @@ function FindData(Psr, z1, z2, Pf, Ld) {
         }
     }
 
-    const jDATA = []
-    if (Params.rangePf.length === 2) {
-        const chunkSize = 2;
-        for (let i = 0; i < iDATA.length; i += chunkSize) {
-            const chunk = iDATA.slice(i, i + chunkSize);
-            jDATA.push(chunk)
-        }
-    } 
-    if (Params.rangePf.length === 1) {
-        const chunkSize = 1;
-        for (let i = 0; i < iDATA.length; i += chunkSize) {
-            const chunk = iDATA.slice(i, i + chunkSize);
-            jDATA.push(chunk)
-        }
-    }
+    const jDATA = SliceArr(iDATA, Params.rangePf)
 
+    // Интерполируем по Pf
     const kDATA = []
     for(let i = 0; i < jDATA.length; i++) {
         if(jDATA[i].length === 1) {
@@ -229,6 +209,7 @@ function FindData(Psr, z1, z2, Pf, Ld) {
         }
     }
 
+    // Интерполируем по Ld
     let lDATA = null;
     if(Params.rangeLd.length === kDATA.length) {
         lDATA = kDATA[0] + (Ld - Params.rangeLd[0])*((kDATA[1] - kDATA[0]) / (Params.rangeLd[1] - Params.rangeLd[0]))
