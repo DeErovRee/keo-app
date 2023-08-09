@@ -165,7 +165,7 @@ function FindData(Psr, z1, z2, Pf, Ld) {
             fDATA.push(chunk)
         }
     } 
-    if (Params.rangeZ2.length === 2 && Params.rangeZ1 === 2) {
+    if (Params.rangeZ2.length === 2 && Params.rangeZ1.length === 2) {
         const chunkSize = 4;
         for (let i = 0; i < bDATA.length; i += chunkSize) {
             const chunk = bDATA.slice(i, i + chunkSize);
@@ -194,12 +194,10 @@ function FindData(Psr, z1, z2, Pf, Ld) {
         }
     }
     const hDATA = SliceArr(gDATA, Params.rangePsr)
-
     // Интерполируем по Psr
     const iDATA = []
     for(let i = 0; i < hDATA.length; i++) {
         if(hDATA[i].length === 1) {
-            console.log('скипаем интерполяцию')
             iDATA.push(hDATA[i][0])
         } else {
             iDATA.push(Interpolation(hDATA[i], Params.rangePsr, Psr))
@@ -213,7 +211,7 @@ function FindData(Psr, z1, z2, Pf, Ld) {
         if(jDATA[i].length === 1) {
             kDATA.push(jDATA[i][0])
         } else {
-            kDATA.push(Interpolation(jDATA[i], Params.rangePf, Pf)) 
+            kDATA.push(Interpolation(jDATA[i], Params.rangePf, Pf))
         }
     }
 
@@ -225,7 +223,7 @@ function FindData(Psr, z1, z2, Pf, Ld) {
         lDATA = kDATA[0]
     }
 
-    return lDATA
+    return lDATA.toFixed(2)
 }
 
 module.exports = FindData
