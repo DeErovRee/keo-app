@@ -1,0 +1,15 @@
+header {
+    display: flex;
+    justify-content: space-evenly;
+    padding: 10px 95px;
+    background-color: blue;
+}
+
+header button {
+    padding: 10px 25px;
+    color: white;
+    background-color: transparent;
+    border: 1px solid white;
+    border-radius: 5px;
+    cursor: pointer;
+}
