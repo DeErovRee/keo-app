@@ -9,17 +9,3 @@ body {
   max-width: 1920px;
   overflow-x: hidden;
 }
-
-body {
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-main h1 {
-  font-size: 320px;
-  padding: 0 95px;
-  text-align: center;
-}

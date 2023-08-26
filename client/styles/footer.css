@@ -1,7 +1,6 @@
 footer {
     display: flex;
     color: white;
-    padding: 10px 95px;
-    background-color: blue;
+    background-color: #75bdef;
     justify-content: center;
 }

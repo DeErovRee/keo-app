@@ -1,19 +1,23 @@
-div {
-    padding: 10px 95px;
-}
-
 form {
     align-items: center;
     display: flex;
     flex-direction: column;
 }
 
-form input {
-    width: 60%;
-    max-width: 600px;
+form input, select {
     margin: 5px 0;
     padding: 5px 15px;
     border: 1px solid black;
     border-radius: 5px;
-    outline-color: blue;
+    outline-color: #75bdef;
+}
+
+form button {
+    padding: 10px 35px;
+    margin: 5px 0 0 0;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 10px;
+    background-color: #75bdef;
+    color: white;
 }

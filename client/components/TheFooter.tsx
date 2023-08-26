@@ -12,7 +12,6 @@ export default function TheFooter () {
                         <a href='https://github.com/DeErovRee'>GitHub</a>
                     </li>
                 </ul>
-                
             </div>
         </footer>
     )
